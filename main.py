@@ -217,16 +217,16 @@ def save_grouped_articles(grouped_articles_with_scores: List[Tuple[List[Dict[str
     ensure_directory_exists(output_dir)
     saved_files_count = 0
     for i, (group, avg_similarity) in enumerate(grouped_articles_with_scores):
-        if len(group) > 1:  # Only save groups with more than one article
-            filename = f"group_{i}.json"
-            file_path = os.path.join(output_dir, filename)
-            try:
-                with open(file_path, 'w', encoding='utf-8') as file:
-                    json.dump({'articles': group, 'average_similarity': avg_similarity}, file, ensure_ascii=False, indent=4)
-                logger.info("Group %d: Saved %d articles to %s, Avg Similarity: %.2f", i, len(group), file_path, avg_similarity)
-                saved_files_count += 1
-            except Exception as e:
-                logger.error("Error saving group %d to JSON: %s", i, e)
+        # if len(group) > 1:  # Only save groups with more than one article
+        filename = f"group_{i}.json"
+        file_path = os.path.join(output_dir, filename)
+        try:
+            with open(file_path, 'w', encoding='utf-8') as file:
+                json.dump({'articles': group, 'average_similarity': avg_similarity}, file, ensure_ascii=False, indent=4)
+            logger.info("Group %d: Saved %d articles to %s, Avg Similarity: %.2f", i, len(group), file_path, avg_similarity)
+            saved_files_count += 1
+        except Exception as e:
+            logger.error("Error saving group %d to JSON: %s", i, e)
     return saved_files_count
 
 
@@ -283,7 +283,7 @@ def main(config: Dict[str, Any]) -> None:
     logger.info("Clustering texts...")
     grouped_articles_with_scores = aggregate_similar_articles(articles, similarity_matrix, config.get('similarity_threshold', 0.66))
 
-    logger.info("Saving grouped articles to JSON files...")
+    logger.info("Saving {} grouped articles to JSON files...".format(len(grouped_articles_with_scores)))
     saved_files_count = save_grouped_articles(grouped_articles_with_scores, output_directory)
     logger.info("Total number of JSON files generated: %d", saved_files_count)
 

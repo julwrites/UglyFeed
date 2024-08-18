@@ -8,7 +8,6 @@ services:
     volumes:
       - ./input/feeds.txt:/app/input/feeds.txt # Mounts the local file 'feeds.txt' to '/app/input/feeds.txt' in the container.
       - ./config.yaml:/app/config.yaml # Mounts the local file 'config.yaml' to '/app/config.yaml' in the container.
-    container_name: uglyfeed # Sets the container's name to 'uglyfeed' for easier identification and management.
     networks:
       - uglyfeed_network # Connects the service to the specified network 'uglyfeed_network'.
 

@@ -538,7 +538,7 @@ if selected == "Debug":
     log_level = st.select_slider(
         "Select log level",
         options=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        value="INFO"
+        value="DEBUG"
     )
     logger.setLevel(log_level)
     st.info(f"Current log level set to: {log_level}")

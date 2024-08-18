@@ -166,7 +166,7 @@ def process_item(item, config, moderated_words):
     )
 
     guid = SubElement(item_element, 'guid')
-    guid.text = f"https://github.com/fabriziosalmi/UglyFeed/{urllib.parse.quote(item.get('title', 'No Title'))}"
+    guid.text = f"https://github.com/julwrites/UglyFeed/{urllib.parse.quote(item.get('title', 'No Title'))}"
 
     return item_element
 

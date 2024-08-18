@@ -19,7 +19,7 @@ def run_script(script_name: str) -> tuple[str, str]:
     try:
         process = subprocess.run(
             ["python", script_name],
-            capture_output=True, text=True, timeout=60
+            capture_output=True, text=True, timeout=6000
         )
         output = process.stdout.strip() if process.stdout else "No output"
         errors = process.stderr.strip() if process.stderr else "No errors"

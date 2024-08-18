@@ -87,8 +87,8 @@ moderation:
   allow_duplicates: false  # Remove source links repetitions
 
 # Scheduler settings
-scheduling_enabled: false  # Enable or disable scheduling
-scheduling_interval: 4  # Interval for scheduling
+scheduling_enabled: true  # Enable or disable scheduling
+scheduling_interval: 24  # Interval for scheduling
 scheduling_period: hours  # Period unit for scheduling (e.g., hours, minutes)
 
 # Custom HTTP server port

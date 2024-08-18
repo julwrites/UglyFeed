@@ -21,9 +21,22 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Maximum context length for LLM APIs
-MAX_TOKENS = 32768
+MAX_TOKENS = 128000
 
-def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504), session=None):
+class TimeoutHTTPAdapter(HTTPAdapter):
+    def __init__(self, *args, **kwargs):
+        if "timeout" in kwargs:
+            self.timeout = kwargs["timeout"]
+            del kwargs["timeout"]
+        super().__init__(*args, **kwargs)
+
+    def send(self, request, **kwargs):
+        timeout = kwargs.get("timeout")
+        if timeout is None and hasattr(self, 'timeout'):
+            kwargs["timeout"] = self.timeout
+        return super().send(request, **kwargs)
+
+def requests_retry_session(retries=10, backoff_factor=3.0, status_forcelist=(500, 502, 504), session=None):
     """Create a requests session with retry logic."""
     session = session or requests.Session()
     retry = Retry(
@@ -33,7 +46,7 @@ def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500,
         backoff_factor=backoff_factor,
         status_forcelist=status_forcelist,
     )
-    adapter = HTTPAdapter(max_retries=retry)
+    adapter = TimeoutHTTPAdapter(timeout=100000, max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
     return session
@@ -108,6 +121,7 @@ def call_groq_api(api_url, combined_content, model, api_key):
 
 def call_ollama_api(api_url, combined_content, model):
     """Call the Ollama API with the given parameters."""
+    logger.debug(combined_content)
     data = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": combined_content}],
@@ -212,23 +226,20 @@ def process_json_file(filepath, api_url, model, api_key, content_prefix, rewritt
         with open(filepath, 'r', encoding='utf-8') as file:
             json_data = json.load(file)
             logger.debug("Type of json_data: %s", type(json_data))
-            if isinstance(json_data, dict):
-                # If json_data is a dictionary, convert it to a list of one dictionary
-                json_data = [json_data]
-                logger.warning("Converted dictionary to list. File: %s", filepath)
-            elif isinstance(json_data, str):
-                logger.error("Expected list of dictionaries but got a string. File: %s", filepath)
+            if not isinstance(json_data, dict):
+                logger.error("Expected list of dictionaries. File: %s", filepath)
                 return
+            json_data = json_data['articles']
     except (json.JSONDecodeError, IOError) as e:
         logger.error("Error reading JSON from %s: %s", filepath, e)
         return
 
     # Ensure 'content' key exists in each dictionary
     combined_content = content_prefix + "\n".join(
-        f"[source {idx + 1}] {item.get('content', 'No content provided')}" for idx, item in enumerate(json_data))
+        ["[content] {}".format(item.get('content', 'No content provided') ) for item in json_data])
 
     logger.info("Processing %s - combined content prepared.", filepath)
-    logger.debug("Combined content: %s", combined_content)
+    logger.info("Combined content: %s", combined_content)
 
     if estimate_token_count(combined_content) > MAX_TOKENS:
         logger.info("Truncating content to fit within %s tokens.", MAX_TOKENS)
