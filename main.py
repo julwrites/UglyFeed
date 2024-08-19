@@ -192,15 +192,17 @@ def cluster_texts(vectors: Any, config: Dict[str, Any]) -> np.ndarray:
     return labels
 
 
-def aggregate_similar_articles(articles: List[Dict[str, str]], similarity_matrix: np.ndarray, threshold: float) -> List[Tuple[List[Dict[str, str]], float]]:
+def aggregate_similar_articles(articles: List[Dict[str, str]], vectors: Any, similarity_matrix: np.ndarray, config: Dict[str, Any], threshold: float) -> List[Tuple[List[Dict[str, str]], float]]:
     """Aggregate articles into groups based on similarity matrix and threshold."""
-    clustering = AgglomerativeClustering(
-        metric='precomputed',
-        linkage='average',
-        distance_threshold=threshold,
-        n_clusters=None
-    )
-    labels = clustering.fit_predict(1 - similarity_matrix)
+    # clustering = AgglomerativeClustering(
+    #     metric='precomputed',
+    #     linkage='average',
+    #     distance_threshold=threshold,
+    #     n_clusters=None
+    # )
+    # labels = clustering.fit_predict(1 - similarity_matrix)
+
+    labels = cluster_texts(vectors, config)
 
     grouped_articles_with_scores = []
     for label in set(labels):
@@ -281,7 +283,7 @@ def main(config: Dict[str, Any]) -> None:
     similarity_matrix = cosine_similarity(vectors)
 
     logger.info("Clustering texts...")
-    grouped_articles_with_scores = aggregate_similar_articles(articles, similarity_matrix, config.get('similarity_threshold', 0.66))
+    grouped_articles_with_scores = aggregate_similar_articles(articles=articles, vectors=vectors, similarity_matrix=similarity_matrix, config=config.get('similarity_options', {}), threshold=config.get('similarity_threshold', 0.66))
 
     logger.info("Saving {} grouped articles to JSON files...".format(len(grouped_articles_with_scores)))
     saved_files_count = save_grouped_articles(grouped_articles_with_scores, output_directory)
@@ -309,7 +311,7 @@ if __name__ == "__main__":
         description='Process RSS feeds and group similar articles based on a similarity threshold.'
     )
     parser.add_argument(
-        '-c', '--config', type=str, default='config.yaml',
+        '-c', '--config', type=str, default='config/config.yaml',
         help='Path to the configuration file (default: config.yaml).'
     )
     parser.add_argument(

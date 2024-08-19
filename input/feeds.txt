@@ -1,2 +1,0 @@
-https://rss.arxiv.org/rss/cs
-https://feeds.bbci.co.uk/news/world/rss.xml

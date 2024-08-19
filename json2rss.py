@@ -23,7 +23,7 @@ namespaces = {
 for prefix, uri in namespaces.items():
     register_namespace(prefix, uri)
 
-def load_config(config_file='config.yaml'):
+def load_config(config_file='config/config.yaml'):
     """Load configuration from a YAML file."""
     try:
         with open(config_file, 'r', encoding='utf-8') as file:
@@ -239,7 +239,7 @@ def create_rss_feed(json_data, output_path, config):
 def main():
     """Main function to read JSON files and create/update the RSS feed."""
     parser = argparse.ArgumentParser(description='Process JSON to RSS.')
-    parser.add_argument('--config', type=str, default='config.yaml', help='Path to the configuration file')
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='Path to the configuration file')
     parser.add_argument('--max_items', type=int, help='Override maximum number of items in the RSS feed')
     parser.add_argument('--max_age_days', type=int, help='Override maximum age of items in days')
     parser.add_argument('--feed_title', type=str, help='Override feed title')

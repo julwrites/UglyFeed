@@ -11,7 +11,7 @@ import yaml
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_config(config_path='config.yaml'):
+def load_config(config_path='config/config.yaml'):
     """
     Load configuration from YAML or environment variables.
     """

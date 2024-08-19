@@ -19,7 +19,7 @@ from server import toggle_server, copy_xml_to_static, uglyfeed_file
 from utils import get_local_ip, get_xml_stats
 
 # Load the configuration
-config = load_config("config.yaml")
+config = load_config("config/config.yaml")
 
 # Initialize logging
 logger = setup_logging()
@@ -135,7 +135,7 @@ if 'server_thread' not in st.session_state:
 # Load RSS feeds
 if 'feeds' not in st.session_state:
     st.session_state.feeds = ""
-    feeds_path = Path("input/feeds.txt")
+    feeds_path = Path(st.session_state.config_data["input_feeds_path"])
     if feeds_path.exists():
         with open(feeds_path, "r") as f:
             st.session_state.feeds = f.read()
@@ -153,6 +153,7 @@ start_scheduling(
     st.session_state.config_data['scheduling_period'],
     st.session_state
 )
+toggle_server(True, st.session_state.config_data['http_server_port'], st.session_state)
 
 # Create a sidebar menu
 with st.sidebar:
@@ -538,7 +539,7 @@ if selected == "Debug":
     log_level = st.select_slider(
         "Select log level",
         options=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        value="DEBUG"
+        value="INFO"
     )
     logger.setLevel(log_level)
     st.info(f"Current log level set to: {log_level}")

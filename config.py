@@ -5,8 +5,8 @@ Configuration Management for UglyFeed
 from pathlib import Path
 import yaml
 
-CONFIG_PATH = Path("config.yaml")
-FEEDS_PATH = Path("input/feeds.txt")
+CONFIG_PATH = Path("config/config.yaml")
+FEEDS_PATH = Path("config/input/feeds.txt")
 
 def tuple_constructor(loader, node):
     """Constructor for !!python/tuple tag."""
@@ -33,7 +33,7 @@ def load_config(config_file=CONFIG_PATH):
 def ensure_default_config(config_data):
     """Ensure all required keys are in the config_data with default values."""
     defaults = {
-        'input_feeds_path': "input/feeds.txt",
+        'input_feeds_path': "config/input/feeds.txt",
         'similarity_threshold': 0.5,
         'preprocessing': {
             'remove_html': True,

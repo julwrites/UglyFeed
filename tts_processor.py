@@ -53,7 +53,7 @@ def process_json_files(tts_input, tts_output, tts_language, speed_factor, enable
 
 def load_config():
     try:
-        with open("config.yaml", 'r') as config_file:
+        with open("config/config.yaml", 'r') as config_file:
             config = yaml.safe_load(config_file)
         logger.debug(f"Loaded configuration: {config}")
         return config

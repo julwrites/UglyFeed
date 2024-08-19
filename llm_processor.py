@@ -36,7 +36,7 @@ class TimeoutHTTPAdapter(HTTPAdapter):
             kwargs["timeout"] = self.timeout
         return super().send(request, **kwargs)
 
-def requests_retry_session(retries=10, backoff_factor=3.0, status_forcelist=(500, 502, 504), session=None):
+def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504), session=None):
     """Create a requests session with retry logic."""
     session = session or requests.Session()
     retry = Retry(
@@ -239,7 +239,7 @@ def process_json_file(filepath, api_url, model, api_key, content_prefix, rewritt
         ["[content] {}".format(item.get('content', 'No content provided') ) for item in json_data])
 
     logger.info("Processing %s - combined content prepared.", filepath)
-    logger.info("Combined content: %s", combined_content)
+    logger.debug("Combined content: %s", combined_content)
 
     if estimate_token_count(combined_content) > MAX_TOKENS:
         logger.info("Truncating content to fit within %s tokens.", MAX_TOKENS)
@@ -344,7 +344,7 @@ def main(config_path, prompt_path=None, api=None, api_key=None, model=None, api_
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process JSON files with LLM API')
-    parser.add_argument('--config', type=str, default='config.yaml', help='Path to the configuration YAML file (default: config.yaml in current directory)')
+    parser.add_argument('--config', type=str, default='config/config.yaml', help='Path to the configuration YAML file (default: config.yaml in current directory)')
     parser.add_argument('--prompt', type=str, help='Path to the prompt file')
     parser.add_argument('--api', type=str, help='API type (OpenAI, Groq, Ollama, Anthropic)')
     parser.add_argument('--api_key', type=str, help='API key for the selected API')
@@ -355,5 +355,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    config_path = args.config if args.config else 'config.yaml'
+    config_path = args.config if args.config else 'config/config.yaml'
     main(config_path, args.prompt, args.api, args.api_key, args.model, args.api_url, args.output_folder, args.rewritten_folder)

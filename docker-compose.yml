@@ -6,8 +6,8 @@ services:
       - "18001:8001" # Maps port 8001 on the host to port 8001 in the container.
       - "18501:8501" # Maps port 8501 on the host to port 8501 in the container.
     volumes:
-      - ./input/feeds.txt:/app/input/feeds.txt # Mounts the local file 'feeds.txt' to '/app/input/feeds.txt' in the container.
-      - ./config.yaml:/app/config.yaml # Mounts the local file 'config.yaml' to '/app/config.yaml' in the container.
+      - ~/OneDrive/HomeServer/UglyFeed/config:/app/config
+      - ~/OneDrive/HomeServer/UglyFeed/uglyfeeds:/app/uglyfeeds
     networks:
       - uglyfeed_network # Connects the service to the specified network 'uglyfeed_network'.
 
